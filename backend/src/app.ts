@@ -6,7 +6,7 @@ import outputRoutes from './routes/output.routes';
 const app = express();
 
 app.use(express.json());
-
+// CORSの設定
 app.use('/api/auth', authRoutes);
 app.use('/api/inputs', inputRoutes);
 app.use('/api/inputs/:inputId/output', outputRoutes);
