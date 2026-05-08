@@ -67,7 +67,11 @@ const deleteInput = async (req: AuthRequest, res: Response) => {
             return;
         }
 
-        const deletedInput = await prisma.input.delete({ where: { id: inputId } });
+        const [, deletedInput] = await prisma.$transaction([
+            prisma.output.deleteMany({ where: { inputId } }),
+            prisma.input.delete({ where: { id: inputId } })
+        ])
+        res.status(200).json(deletedInput)
         res.status(200).json(deletedInput);
     } catch (error) {
         res.status(500).json({ message: 'inputの削除に失敗しました' });
