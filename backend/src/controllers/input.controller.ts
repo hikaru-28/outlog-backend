@@ -4,10 +4,22 @@ import prisma from '../prisma';
 
 const getAllInputs = async (req: AuthRequest, res: Response) => {
     try {
+        const page = parseInt(req.query.page as string) || 1
+        const limit = parseInt(req.query.limit as string) || 10
+        const skip = (page - 1) * limit
         const userId = req.userId;
-        const inputs = await prisma.input.findMany({ where: { userId: userId } });
 
-        res.status(200).json(inputs);
+        const [inputs, total] = await prisma.$transaction([
+            prisma.input.findMany({
+                where: { userId },
+                skip,
+                take: limit,
+                orderBy: { createdAt: 'desc' }
+            }),
+            prisma.input.count({ where: { userId } })
+        ])
+
+        res.status(200).json({ inputs, total, page, limit });
     } catch (error) {
         res.status(500).json({ message: 'inputの取得に失敗しました' });
     }
@@ -71,7 +83,6 @@ const deleteInput = async (req: AuthRequest, res: Response) => {
             prisma.output.deleteMany({ where: { inputId } }),
             prisma.input.delete({ where: { id: inputId } })
         ])
-        res.status(200).json(deletedInput)
         res.status(200).json(deletedInput);
     } catch (error) {
         res.status(500).json({ message: 'inputの削除に失敗しました' });
