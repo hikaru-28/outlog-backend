@@ -52,6 +52,11 @@ const createInput = async (req: AuthRequest, res: Response) => {
         }
 
         const { title, type, memo } = req.body;
+
+        if (!title || !type) {
+            res.status(400).json({ message: 'タイトルとタイプは必須です' })
+            return
+        }
         const newInput = await prisma.input.create({
             data: {
                 title,
@@ -94,6 +99,11 @@ const updateInput = async (req: AuthRequest, res: Response) => {
         const userId = req.userId;
         const inputId = req.params.id as string;
         const { title, type, memo } = req.body;
+
+        if (!title || !type) {
+            res.status(400).json({ message: 'タイトルとタイプは必須です' })
+            return
+        }
 
         const input = await prisma.input.findUnique({ where: { id: inputId, userId: userId } });
 
