@@ -31,6 +31,11 @@ const createOutput = async (req: AuthRequest, res: Response) => {
         };
 
         const { content } = req.body;
+        if (!content) {
+            res.status(400).json({ message: 'アウトプット内容は必須です' })
+            return
+        }
+
         const [outputResult, inputResult] = await prisma.$transaction([
             prisma.output.create({ data: { content, inputId } }),
             prisma.input.update({ where: { id: inputId }, data: { isOutputDone: true } })
@@ -55,6 +60,10 @@ const updateOutput = async (req: AuthRequest, res: Response) => {
         };
 
         const { content } = req.body;
+        if (!content) {
+            res.status(400).json({ message: 'アウトプット内容は必須です' })
+            return
+        }
 
         const [outputResult, inputResult] = await prisma.$transaction([
             prisma.output.update({ where: { inputId }, data: { content } }),
