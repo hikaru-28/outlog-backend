@@ -9,7 +9,7 @@ const app = express();
 app.use(cors({
     origin: [
         'http://localhost:5173',
-        'https://outlog-frontend.vercel.app'
+        'https://outlog-frontend-71vauslmj-hikaru-28s-projects.vercel.app/'
     ],
     credentials: true
 }))
