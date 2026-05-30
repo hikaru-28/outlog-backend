@@ -9,14 +9,23 @@ const getAllInputs = async (req: AuthRequest, res: Response) => {
         const skip = (page - 1) * limit
         const userId = req.userId;
 
+        const keyword = req.query.keyword as string | undefined;
+
+        const where = {
+            userId,
+            ...(keyword && {
+                title: { contains: keyword, mode: 'insensitive' as const }
+            }),
+        }
+
         const [inputs, total] = await prisma.$transaction([
             prisma.input.findMany({
-                where: { userId },
+                where,
                 skip,
                 take: limit,
                 orderBy: { createdAt: 'desc' }
             }),
-            prisma.input.count({ where: { userId } })
+            prisma.input.count({ where })
         ])
 
         res.status(200).json({ inputs, total, page, limit });
