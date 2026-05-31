@@ -10,12 +10,14 @@ const getAllInputs = async (req: AuthRequest, res: Response) => {
         const userId = req.userId;
 
         const keyword = req.query.keyword as string | undefined;
+        const type = req.query.type as string | undefined;
 
         const where = {
             userId,
             ...(keyword && {
                 title: { contains: keyword, mode: 'insensitive' as const }
             }),
+            ...(type && { type }),
         }
 
         const [inputs, total] = await prisma.$transaction([
