@@ -11,6 +11,7 @@ const getAllInputs = async (req: AuthRequest, res: Response) => {
 
         const keyword = req.query.keyword as string | undefined;
         const type = req.query.type as string | undefined;
+        const isOutputDone = req.query.isOutputDone as string | undefined;
 
         const where = {
             userId,
@@ -18,6 +19,9 @@ const getAllInputs = async (req: AuthRequest, res: Response) => {
                 title: { contains: keyword, mode: 'insensitive' as const }
             }),
             ...(type && { type }),
+            ...(isOutputDone !== undefined && isOutputDone !== '' && {
+                isOutputDone: isOutputDone === 'true'
+            }),
         }
 
         const [inputs, total] = await prisma.$transaction([
