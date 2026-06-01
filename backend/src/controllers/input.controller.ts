@@ -13,6 +13,8 @@ const getAllInputs = async (req: AuthRequest, res: Response) => {
         const type = req.query.type as string | undefined;
         const isOutputDone = req.query.isOutputDone as string | undefined;
 
+        const sort = req.query.sort as string | undefined;
+
         const where = {
             userId,
             ...(keyword && {
@@ -24,12 +26,16 @@ const getAllInputs = async (req: AuthRequest, res: Response) => {
             }),
         }
 
+        const orderBy = sort === 'asc'
+            ? { createdAt: 'asc' as const }
+            : { createdAt: 'desc' as const }
+
         const [inputs, total] = await prisma.$transaction([
             prisma.input.findMany({
                 where,
                 skip,
                 take: limit,
-                orderBy: { createdAt: 'desc' }
+                orderBy,
             }),
             prisma.input.count({ where })
         ])
