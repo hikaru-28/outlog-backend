@@ -54,7 +54,7 @@ const getStreak = async (req: AuthRequest, res: Response) => {
         }
         longestStreak = Math.max(longestStreak, tempStreak)
 
-        // カレンダー用データ (過去90日分)
+        // カレンダー用データ (過去一年分)
         const activityMap = new Map<string, number>()
         outputs.forEach(output => {
             const date = output.createdAt.toISOString().split('T')[0]
@@ -62,7 +62,7 @@ const getStreak = async (req: AuthRequest, res: Response) => {
         })
 
         const activityData = []
-        for (let i = 89; i >= 0; i--) {
+        for (let i = 364; i >= 0; i--) {
             const date = new Date(Date.now() - i * 86400000).toISOString().split('T')[0]
             activityData.push({ date, count: activityMap.get(date) || 0 })
         }
