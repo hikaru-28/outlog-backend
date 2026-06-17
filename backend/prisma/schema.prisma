@@ -37,6 +37,7 @@ model Output {
   id        String   @id @default(uuid())
   inputId   String   @unique
   content   String
+  outputType String @default("normal")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   input     Input    @relation(fields: [inputId], references: [id])
