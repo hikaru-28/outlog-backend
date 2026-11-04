@@ -1,0 +1,15 @@
+name: Keep Alive
+
+# Renderのスリープ（無料プランは15分無通信でスリープ）と
+# Supabaseの自動一時停止（無料プランは1週間無通信で停止）を防ぐ
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping /health
+        run: curl --fail --silent --show-error --max-time 90 --retry 3 --retry-delay 20 "${{ secrets.BACKEND_URL }}/health"
